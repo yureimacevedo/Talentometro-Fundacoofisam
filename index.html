@@ -1118,6 +1118,10 @@ const PortalApp = ({marca}) => {
     assignments.filter(a=>a.evaluadorId===u.id).forEach(a=>{
       const done = evaluations.some(e=>e.assignmentId===a.id);
       const evaluado = relevantCollaborators.find(c=>c.id===a.evaluadoId);
+      // Si el rol ya no está activo para la categoría de la persona evaluada
+      // (se desmarcó en Parametrización) y aún no se respondió, no se muestra.
+      const pesosEv = (config && config.evaluatorWeights && evaluado && config.evaluatorWeights[evaluado.categoria]) || null;
+      if(!done && pesosEv && !(a.role in pesosEv)) return;
       tasks.push({kind:'assigned', assignmentId:a.id, evaluadoId:a.evaluadoId, evaluadoNombre: evaluado?evaluado.nombre:'—', role:a.role, done});
     });
     return tasks;
